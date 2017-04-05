@@ -18,7 +18,7 @@ This extension contributes the following settings:
 
 ## Release Notes
 
-### 0.0.1
+### 0.0.1 2017-04-04
 
 Initial release of git-autoconfig
 
