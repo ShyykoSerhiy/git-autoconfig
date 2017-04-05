@@ -1,0 +1,77 @@
+{
+    "name": "git-autoconfig",
+    "displayName": "git-autoconfig",
+    "description": "Automatic git config user.email and user.name setting",
+    "version": "0.0.1",
+    "publisher": "shyykoserhiy",
+    "engines": {
+        "vscode": "^1.10.0"
+    },
+    "icon": "media/icon.png",
+    "galleryBanner": {
+        "color": "#000",
+        "theme": "dark"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "git-autoconfig.getConfig",
+                "title": "git-autoconfig: Get Config"
+            },
+            {
+                "command": "git-autoconfig.setConfig",
+                "title": "git-autoconfig: Set Config"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "git-autoconfig configuration",
+            "properties": {
+                "git-autoconfig.configList": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "title": "inner objects",
+                        "properties": {
+                            "user.email": {
+                                "type": "string",
+                                "description": "email associated with git account"
+                            },
+                            "user.name": {
+                                "type": "string",
+                                "description": "name associated with git account"
+                            }
+                        }
+                    },
+                    "default": [],
+                    "description": "List of local git configs in format [{'user.email': 'Marvolo@Riddle.Tom', 'user.name': 'Tom Marvolo Riddle'}]"
+                },
+                "git-autoconfig.queryInterval": {
+                    "type": "integer",
+                    "default": 5000,
+                    "description": "Interval for querying of git config in ms"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.32",
+        "@types/node": "^6.0.40",
+        "mocha": "^2.3.3",
+        "typescript": "^2.2.1",
+        "vscode": "^1.0.0"
+    }
+}
