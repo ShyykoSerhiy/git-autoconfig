@@ -1,10 +1,10 @@
 # git-autoconfig
 
-Working with git repos where you can have multiple emails (like one for work, one for github, one for bitbucket, etc...) can be painfull. This extension forces you to set localy user.email and user.name for each project under git that you open with vscode.
+Working with git repos where you can have multiple emails (like one for work, one for github, one for bitbucket, etc...) can be painful. This extension forces you to set locally user.email and user.name for each project under git that you open with vscode.
 
 ## Features
 
-* Convinient selector of previus used pairs of user.email and user.name.
+* Convenient selector of previous used pairs of user.email and user.name.
 
 ![status bar](media/demo.gif)
 
@@ -21,4 +21,3 @@ This extension contributes the following settings:
 ### 0.0.1 2017-04-04
 
 Initial release of git-autoconfig
-
