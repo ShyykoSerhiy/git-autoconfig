@@ -28,7 +28,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     console.log(`${MESSAGE_PREFIX}Config already exists. : ${JSON.stringify(gitConfig, null, 2)}`);
                 }
             } else {
-                console.log(`${MESSAGE_PREFIX}Failed to get repository root.`);
+                //console.log(`${MESSAGE_PREFIX}Failed to get repository root.`);
             }
         } catch (_ignorred) {
             console.log(`${MESSAGE_PREFIX}Error while trying to checkForLocalConfig. ${JSON.stringify(_ignorred)}`);
