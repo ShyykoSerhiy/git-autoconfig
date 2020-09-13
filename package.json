@@ -2,7 +2,7 @@
     "name": "git-autoconfig",
     "displayName": "git-autoconfig",
     "description": "Automatic git config user.email and user.name setting for vscode",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "shyykoserhiy",
     "license": "MIT",
     "engines": {
