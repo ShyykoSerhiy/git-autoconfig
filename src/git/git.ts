@@ -7,7 +7,6 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as os from 'os';
 import * as cp from 'child_process';
 import { EventEmitter, Event } from 'vscode';
 
@@ -95,7 +94,7 @@ function findGitDarwin(): Promise<IGit> {
 
             function getVersion(path: string) {
                 // make sure git executes
-                cp.exec('git --version', (err, stdout: Buffer) => {
+                cp.exec('git --version', (err, stdout: Buffer | string) => {
                     if (err) {
                         return e('git not found');
                     }

@@ -1,7 +1,24 @@
 'use strict';
 import * as vscode from 'vscode';
 import { Git, findGit, Repository, GitError } from './git/git';
-import { getConfigList, updateConfigList, CUSTOM_GIT_CONFIG, GitConfig, generateGitConfigKey, getConfigQueryInterval } from './config/config';
+import {
+    getConfigList,
+    updateConfigList,
+    CUSTOM_GIT_CONFIG,
+    IGNORE_CURRENT_ROOT_GIT_CONFIG,
+    GitConfig,
+    generateGitConfigKey,
+    getConfigQueryInterval,
+    removeRootFromIgnoreList,
+    addRootToIgnoreList,
+    isRootInIgnoreList
+} from './config/config';
+import {
+    COMMAND_GET_CONFIG,
+    COMMAND_SET_CONFIG,
+    COMMAND_IGNORE_ROOT,
+    COMMAND_UNIGNORE_ROOT
+} from './consts';
 const MESSAGE_PREFIX = "git-autoconfig: ";
 
 let timeoutId: NodeJS.Timer;
@@ -19,6 +36,11 @@ export async function activate(context: vscode.ExtensionContext) {
         const repositoryRoot = await findRepositoryRoot(false);
         const repository = new Repository(git, repositoryRoot);
         try {
+            // return early if the root is in ignore list 
+            if (isRootInIgnoreList(repositoryRoot)) {
+                return;
+            }
+
             if (repositoryRoot) {
                 const gitConfig = await getGitConfig(repository, false);
                 if (!gitConfig) {
@@ -43,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
      * @param showError if to show  error messages 
      */
     const findRepositoryRoot = async (showError = true) => {
-        let repositoryRoot;
+        let repositoryRoot: string;
         try {
             repositoryRoot = await git.getRepositoryRoot(vscode.workspace.rootPath);
         } catch (e) {
@@ -74,6 +96,22 @@ export async function activate(context: vscode.ExtensionContext) {
             showMessages && vscode.window.showWarningMessage(`${MESSAGE_PREFIX}user.email or user.name is not set locally. You can set it using command '' `);
         }
         return null;
+    }
+
+    const ignoreCurrentRoot = async () => {
+        const repositoryRoot = await findRepositoryRoot();
+        if (!repositoryRoot) {
+            return;
+        }
+        await addRootToIgnoreList(repositoryRoot);
+    }
+
+    const unignoreCurrentRoot = async () => {
+        const repositoryRoot = await findRepositoryRoot();
+        if (!repositoryRoot) {
+            return;
+        }
+        await removeRootFromIgnoreList(repositoryRoot);
     }
 
     const setGitConfig = async () => {
@@ -114,13 +152,15 @@ export async function activate(context: vscode.ExtensionContext) {
             await setGitConfig(newConfig);
         }
         if (configList.length) {
-            const map: Map<string, GitConfig> = configList.concat(CUSTOM_GIT_CONFIG).reduce((map, c) => {
+            const map: Map<string, GitConfig> = configList.concat(CUSTOM_GIT_CONFIG, IGNORE_CURRENT_ROOT_GIT_CONFIG).reduce((map, c) => {
                 map.set(generateGitConfigKey(c), c);
                 return map;
             }, new Map<string, GitConfig>());
-            const pick = await vscode.window.showQuickPick(Array.from(map.keys()), { ignoreFocusOut: true, placeHolder: 'Select one of previous configs or new custom one.' });
+            const pick = await vscode.window.showQuickPick(Array.from(map.keys()), { ignoreFocusOut: true, placeHolder: 'Select one of previous configs or new custom one or ignore current root.' });
             if (pick === generateGitConfigKey(CUSTOM_GIT_CONFIG)) {
                 await customSetGitConfig();
+            } else if (pick === generateGitConfigKey(IGNORE_CURRENT_ROOT_GIT_CONFIG)) {
+                await vscode.commands.executeCommand(COMMAND_IGNORE_ROOT);
             } else {
                 await setGitConfig(map.get(pick));
             }
@@ -131,7 +171,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     //commands
 
-    const getConfigCommand = vscode.commands.registerCommand('git-autoconfig.getConfig', async () => {
+    const getConfigCommand = vscode.commands.registerCommand(COMMAND_GET_CONFIG, async () => {
         const repositoryRoot = await findRepositoryRoot();
         if (!repositoryRoot) {
             return;
@@ -140,11 +180,24 @@ export async function activate(context: vscode.ExtensionContext) {
         getGitConfig(repository);
     });
 
-    const setConfigCommand = vscode.commands.registerCommand('git-autoconfig.setConfig', async () => {
+    const setConfigCommand = vscode.commands.registerCommand(COMMAND_SET_CONFIG, async () => {
         await setGitConfig();
     });
 
-    context.subscriptions.push(getConfigCommand, setConfigCommand);
+    const ignoreRootCommand = vscode.commands.registerCommand(COMMAND_IGNORE_ROOT, async () => {
+        await ignoreCurrentRoot();
+    });
+
+    const unignoreRootCommand = vscode.commands.registerCommand(COMMAND_UNIGNORE_ROOT, async () => {
+        await unignoreCurrentRoot();
+    });
+
+    context.subscriptions.push(
+        getConfigCommand,
+        setConfigCommand,
+        ignoreRootCommand,
+        unignoreRootCommand
+    );
 }
 
 // this method is called when your extension is deactivated

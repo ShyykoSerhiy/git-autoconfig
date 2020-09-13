@@ -60,3 +60,6 @@ typings/
 
 # extension out
 out
+
+# vscode test
+.vscode-test
