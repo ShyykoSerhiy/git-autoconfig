@@ -89,11 +89,21 @@ export async function activate(context: vscode.ExtensionContext) {
         try {
             const userEmail = (await repository.configGet('local', 'user.email', {})).trim();
             const userName = (await repository.configGet('local', 'user.name', {})).trim();
-            showMessages && vscode.window.showInformationMessage(`${MESSAGE_PREFIX}user.email=${userEmail} user.name=${userName}`);
-            const result: GitConfig = { "user.email": userEmail, "user.name": userName };
+            const sshCommand = (await repository.configGet('local', 'core.sshCommand', {})).trim();
+            showMessages && vscode.window.showInformationMessage(
+                `${MESSAGE_PREFIX}user.email=${userEmail} user.name=${userName} core.sshCommand=${sshCommand}`
+            );
+            const result: GitConfig = { 
+                "user.email": userEmail, 
+                "user.name": userName, 
+                "core.sshCommand": sshCommand 
+            };
             return result;
+
         } catch (e) {
-            showMessages && vscode.window.showWarningMessage(`${MESSAGE_PREFIX}user.email or user.name is not set locally. You can set it using command '' `);
+            showMessages && vscode.window.showWarningMessage(
+                `${MESSAGE_PREFIX}user.email, user.name or core.sshCommand is not set locally. You can set it using command '' `
+            );
         }
         return null;
     }
@@ -131,6 +141,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
                 await repository.config('local', 'user.email', newConfig['user.email']);
                 await repository.config('local', 'user.name', newConfig['user.name']);
+                await repository.config('local', 'core.sshCommand', newConfig['core.sshCommand']);
+
             } catch (e) {
                 vscode.window.showErrorMessage('Failed to set local git config.', e);
                 return false;
@@ -140,23 +152,50 @@ export async function activate(context: vscode.ExtensionContext) {
         };
 
         const customSetGitConfig = async () => {
-            const userEmail = await vscode.window.showInputBox({ ignoreFocusOut: true, placeHolder: 'user.email like : "Marvolo@Riddle.Tom"', prompt: 'Enter email that you use for your git account.' });
+            const userEmail = await vscode.window.showInputBox({ 
+                ignoreFocusOut: true, 
+                placeHolder: 'user.email like : "Marvolo@Riddle.Tom"', 
+                prompt: 'Enter email that you use for your git account.' 
+            });
+
             if (!userEmail) {
                 vscode.window.showInformationMessage('user.email should not be empty');
             }
-            const userName = await vscode.window.showInputBox({ ignoreFocusOut: true, placeHolder: 'user.name like : "Tom Marvolo Riddle"', prompt: 'Enter name that you use for your git account.' });
+
+            const userName = await vscode.window.showInputBox({ 
+                ignoreFocusOut: true, 
+                placeHolder: 'user.name like : "Tom Marvolo Riddle"', 
+                prompt: 'Enter name that you use for your git account.' 
+            });
+
+            const sshCommandFilePath = await vscode.window.showInputBox({ 
+                ignoreFocusOut: true, 
+                placeHolder: 'SSH key file for core.sshCommand, like : "~/.ssh/id_rsa"', 
+                prompt: 'Enter specific SSH key file path that you use for THIS your git/email account' 
+            });
+
             const newConfig: GitConfig = {
                 "user.email": userEmail,
-                "user.name": userName
+                "user.name": userName,
+                "core.sshCommand": sshCommandFilePath ? `ssh -i ${sshCommandFilePath} -F /dev/null` : ""
             };
+
             await setGitConfig(newConfig);
         }
+
         if (configList.length) {
             const map: Map<string, GitConfig> = configList.concat(CUSTOM_GIT_CONFIG, IGNORE_CURRENT_ROOT_GIT_CONFIG).reduce((map, c) => {
                 map.set(generateGitConfigKey(c), c);
                 return map;
             }, new Map<string, GitConfig>());
-            const pick = await vscode.window.showQuickPick(Array.from(map.keys()), { ignoreFocusOut: true, placeHolder: 'Select one of previous configs or new custom one or ignore current root.' });
+            const pick = await vscode.window.showQuickPick(
+                Array.from(map.keys()), 
+                { 
+                    ignoreFocusOut: true, 
+                    placeHolder: 'Select one of previous configs or new custom one or ignore current root.' 
+                }
+            );
+            
             if (pick === generateGitConfigKey(CUSTOM_GIT_CONFIG)) {
                 await customSetGitConfig();
             } else if (pick === generateGitConfigKey(IGNORE_CURRENT_ROOT_GIT_CONFIG)) {
