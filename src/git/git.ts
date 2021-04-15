@@ -175,13 +175,13 @@ export async function exec(child: cp.ChildProcess): Promise<IExecutionResult> {
     const disposables: IDisposable[] = [];
 
     const once = (ee: NodeJS.EventEmitter, name: string, fn: Function) => {
-        ee.once(name, fn);
-        disposables.push(toDisposable(() => ee.removeListener(name, fn)));
+        ee.once(name, fn as any);
+        disposables.push(toDisposable(() => ee.removeListener(name, fn as any)));
     };
 
     const on = (ee: NodeJS.EventEmitter, name: string, fn: Function) => {
-        ee.on(name, fn);
-        disposables.push(toDisposable(() => ee.removeListener(name, fn)));
+        ee.on(name, fn as any);
+        disposables.push(toDisposable(() => ee.removeListener(name, fn as any)));
     };
 
     const [exitCode, stdout, stderr] = await Promise.all<any>([
@@ -421,8 +421,12 @@ export class Repository {
 
         args.push(key);
 
-        const result = await this.exec(args, options);
-        return result.stdout;
+        try {
+            const result = await this.exec(args, options);
+            return result.stdout;
+        }catch(err){
+            return "";
+        }
     }
 
     async config(scope: string, key: string, value: any, options: any = {}): Promise<string> {
