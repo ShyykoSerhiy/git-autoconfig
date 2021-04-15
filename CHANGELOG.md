@@ -8,3 +8,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [0.0.2] 2020-09-13
 - Feature: Add option to not auto add config [3](https://github.com/ShyykoSerhiy/git-autoconfig/issues/3)
+
+## [0.0.3] 2021-04-15
+- Feature: sshCommand added - now extension allows to set different SSH keys for different usernames per repository;
