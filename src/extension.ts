@@ -19,6 +19,7 @@ import {
     COMMAND_IGNORE_ROOT,
     COMMAND_UNIGNORE_ROOT
 } from './consts';
+import * as path from 'path';
 const MESSAGE_PREFIX = "git-autoconfig: ";
 
 let timeoutId: NodeJS.Timer;
@@ -66,8 +67,24 @@ export async function activate(context: vscode.ExtensionContext) {
      */
     const findRepositoryRoot = async (showError = true) => {
         let repositoryRoot: string;
+        
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const fpath = vscode.window.activeTextEditor.document.uri.path;
+            const relativePath = vscode.workspace.asRelativePath(fpath);
+            // TODO: find a better way about on this
+            const isInWorkspace = relativePath !== fpath;
+            if (isInWorkspace) {
+                rootBaseDir = path.dirname(fpath);
+            }
+        }
+
+        if (!rootBaseDir) {
+            rootBaseDir = vscode.workspace.rootPath;
+        }
+
         try {
-            repositoryRoot = await git.getRepositoryRoot(vscode.workspace.rootPath);
+            repositoryRoot = await git.getRepositoryRoot(rootBaseDir);
         } catch (e) {
             if (showError) {
                 let errorMessage = `${MESSAGE_PREFIX}Failed to get git repository root.`;
