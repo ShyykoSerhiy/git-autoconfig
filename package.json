@@ -2,7 +2,7 @@
     "name": "git-autoconfig-plus",
     "displayName": "git-autoconfig-plus",
     "description": "Automatic git config user.email, user.name, SSH key setting for vscode",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "publisher": "rotaryden",
     "license": "MIT",
     "engines": {
@@ -27,27 +27,27 @@
     "contributes": {
         "commands": [
             {
-                "command": "git-autoconfig.getConfig",
-                "title": "git-autoconfig: Get Config"
+                "command": "git-autoconfig-plus.getConfig",
+                "title": "git-autoconfig-plus: Get Config"
             },
             {
-                "command": "git-autoconfig.setConfig",
-                "title": "git-autoconfig: Set Config"
+                "command": "git-autoconfig-plus.setConfig",
+                "title": "git-autoconfig-plus: Set Config"
             },
             {
-                "command": "git-autoconfig.unignoreRoot",
-                "title": "git-autoconfig: Unignore current project root"
+                "command": "git-autoconfig-plus.unignoreRoot",
+                "title": "git-autoconfig-plus: Unignore current project root"
             },
             {
-                "command": "git-autoconfig.ignoreRoot",
-                "title": "git-autoconfig: Ignore current project root"
+                "command": "git-autoconfig-plus.ignoreRoot",
+                "title": "git-autoconfig-plus: Ignore current project root"
             }
         ],
         "configuration": {
             "type": "object",
-            "title": "git-autoconfig configuration",
+            "title": "git-autoconfig-plus configuration",
             "properties": {
-                "git-autoconfig.configList": {
+                "git-autoconfig-plus.configList": {
                     "type": "array",
                     "items": {
                         "type": "object",
@@ -70,14 +70,14 @@
                     "default": [],
                     "description": "List of local git configs in format [{'user.email': 'Marvolo@Riddle.Tom', 'user.name': 'Tom Marvolo Riddle', 'core.sshCommand': 'ssh -i ~/.ssh/id_rsa -F /dev/null'}]"
                 },
-                "git-autoconfig.ignoreRootList": {
+                "git-autoconfig-plus.ignoreRootList": {
                     "type": "array",
                     "description": "List of roots where this extension should be ignored",
                     "items": {
                         "type": "string"
                     }
                 },
-                "git-autoconfig.queryInterval": {
+                "git-autoconfig-plus.queryInterval": {
                     "type": "integer",
                     "default": 5000,
                     "description": "Interval for querying of git config in ms"

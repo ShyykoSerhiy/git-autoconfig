@@ -19,7 +19,7 @@ import {
     COMMAND_IGNORE_ROOT,
     COMMAND_UNIGNORE_ROOT
 } from './consts';
-const MESSAGE_PREFIX = "git-autoconfig: ";
+const MESSAGE_PREFIX = "git-autoconfig-plus: ";
 
 let timeoutId: NodeJS.Timer;
 
