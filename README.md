@@ -1,4 +1,6 @@
-# git-autoconfig
+# git-autoconfig-plus
+
+Forked from ![git-autoconfig](https://github.com/ShyykoSerhiy/git-autoconfig) to add new features
 
 Working with git repos where you can have multiple emails (like one for work, one for github, one for bitbucket, etc...) can be painful. This extension forces you to set locally user.email and user.name for each project under git that you open with vscode.
 
@@ -17,6 +19,9 @@ This extension contributes the following settings:
 * `git-autoconfig.configList`: List of local git configs in format [{'user.email': 'Marvolo@Riddle.Tom', 'user.name': 'Tom Marvolo Riddle'}] . Extension itself writes into this setting too.
 
 ## Release Notes
+
+## [0.0.3] 2021-04-15
+- Feature: sshCommand added - now extension allows to set different SSH keys for different usernames per repository;
 
 ### 0.0.2 2020-09-13
 - Feature: Add option to not auto add config [3](https://github.com/ShyykoSerhiy/git-autoconfig/issues/3)

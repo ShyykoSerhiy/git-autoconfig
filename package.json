@@ -1,12 +1,12 @@
 {
-    "name": "git-autoconfig",
-    "displayName": "git-autoconfig",
-    "description": "Automatic git config user.email and user.name setting for vscode",
-    "version": "0.0.2",
-    "publisher": "shyykoserhiy",
+    "name": "git-autoconfig-plus",
+    "displayName": "git-autoconfig-plus",
+    "description": "Automatic git config user.email, user.name, SSH key setting for vscode",
+    "version": "0.0.5",
+    "publisher": "rotaryden",
     "license": "MIT",
     "engines": {
-        "vscode": "^1.10.0"
+        "vscode": "^1.55.0"
     },
     "icon": "media/icon.png",
     "galleryBanner": {
@@ -15,39 +15,39 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/ShyykoSerhiy/git-autoconfig.git"
+        "url": "https://github.com/rotaryden/git-autoconfig-plus.git"
     },
     "categories": [
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onStartupFinished"
     ],
-    "main": "./out/src/extension",
+    "main": "./out/src/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "git-autoconfig.getConfig",
-                "title": "git-autoconfig: Get Config"
+                "command": "git-autoconfig-plus.getConfig",
+                "title": "git-autoconfig-plus: Get Config"
             },
             {
-                "command": "git-autoconfig.setConfig",
-                "title": "git-autoconfig: Set Config"
+                "command": "git-autoconfig-plus.setConfig",
+                "title": "git-autoconfig-plus: Set Config"
             },
             {
-                "command": "git-autoconfig.unignoreRoot",
-                "title": "git-autoconfig: Unignore current project root"
+                "command": "git-autoconfig-plus.unignoreRoot",
+                "title": "git-autoconfig-plus: Unignore current project root"
             },
             {
-                "command": "git-autoconfig.ignoreRoot",
-                "title": "git-autoconfig: Ignore current project root"
+                "command": "git-autoconfig-plus.ignoreRoot",
+                "title": "git-autoconfig-plus: Ignore current project root"
             }
         ],
         "configuration": {
             "type": "object",
-            "title": "git-autoconfig configuration",
+            "title": "git-autoconfig-plus configuration",
             "properties": {
-                "git-autoconfig.configList": {
+                "git-autoconfig-plus.configList": {
                     "type": "array",
                     "items": {
                         "type": "object",
@@ -60,20 +60,24 @@
                             "user.name": {
                                 "type": "string",
                                 "description": "name associated with git account"
+                            },
+                            "core.sshCommand": {
+                                "type": "string",
+                                "description": "SSH Command"
                             }
                         }
                     },
                     "default": [],
-                    "description": "List of local git configs in format [{'user.email': 'Marvolo@Riddle.Tom', 'user.name': 'Tom Marvolo Riddle'}]"
+                    "description": "List of local git configs in format [{'user.email': 'Marvolo@Riddle.Tom', 'user.name': 'Tom Marvolo Riddle', 'core.sshCommand': 'ssh -i ~/.ssh/id_rsa -F /dev/null'}]"
                 },
-                "git-autoconfig.ignoreRootList": {
+                "git-autoconfig-plus.ignoreRootList": {
                     "type": "array",
                     "description": "List of roots where this extension should be ignored",
                     "items": {
                         "type": "string"
                     }
                 },
-                "git-autoconfig.queryInterval": {
+                "git-autoconfig-plus.queryInterval": {
                     "type": "integer",
                     "default": 5000,
                     "description": "Interval for querying of git config in ms"
@@ -82,16 +86,22 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "test": "node ./out/src/test/runTest.js"
     },
     "devDependencies": {
-        "@types/mocha": "^8.0.3",
-        "@types/node": "^6.0.40",
-        "mocha": "^8.1.3",
-        "typescript": "^3.9.7",
-        "vscode": "^1.0.0"
+        "@types/vscode": "^1.55.0",
+        "@types/glob": "^7.1.3",
+        "@types/mocha": "^8.0.4",
+        "@types/node": "^12.11.7",
+        "eslint": "^7.19.0",
+        "@typescript-eslint/eslint-plugin": "^4.14.1",
+        "@typescript-eslint/parser": "^4.14.1",
+        "glob": "^7.1.6",
+        "mocha": "^8.2.1",
+        "typescript": "^4.1.3",
+        "vscode-test": "^1.5.0"
     }
 }

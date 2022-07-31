@@ -2,24 +2,27 @@ import { workspace } from 'vscode';
 
 export interface GitConfig {
     "user.name": string,
-    "user.email": string
+    "user.email": string,
+    "core.sshCommand": string
 }
 
 export const CUSTOM_GIT_CONFIG: GitConfig = {
     "user.name": "custom",
-    "user.email": ""
+    "user.email": "",
+    "core.sshCommand": ""
 }
 
 export const IGNORE_CURRENT_ROOT_GIT_CONFIG: GitConfig = {
     "user.name": "Ignore current root",
-    "user.email": ""
+    "user.email": "",
+    "core.sshCommand": ""
 }
 
 const CONFIG_LIST_KEY = 'configList';
 const IGNORE_LIST_KEY = 'ignoreRootList';
 
 export function getConfig() {
-    return workspace.getConfiguration('git-autoconfig');
+    return workspace.getConfiguration('git-autoconfig-plus');
 }
 
 export function getConfigQueryInterval() {
